@@ -52,6 +52,9 @@ func main() {
 		ok, lat := CheckPort(host, portNumber)
 		fLat := float64(lat) / float64(time.Millisecond)
 		if ok {
+			if fLat > 250 {
+				logger.Printf("%.22v | High latency: %.f\n", time.Now(), fLat)
+			}
 			fmt.Printf("%.22v | OK (%.f ms)\n", time.Now(), fLat)
 			time.Sleep(5 * time.Second)
 		} else {
