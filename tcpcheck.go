@@ -46,6 +46,7 @@ func main() {
 	}
 	defer f.Close()
 
+	// Logging
 	logger := log.New(f, "", log.LstdFlags)
 	for {
 		ok, lat := CheckPort(host, portNumber)
