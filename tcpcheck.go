@@ -68,7 +68,7 @@ func tcpLogger(host string, portNumber int) {
 	// Logging
 	logger := log.New(f, "", 0)
 	logger.Println("")
-	logger.Printf("Logging started at %.22v:\n________________________________", time.Now())
+	logger.Printf("Logging %s:%d started at %.22v:\n________________________________", host, portNumber, time.Now())
 	for {
 		ok, lat := CheckPort(host, portNumber)
 		fLat := float64(lat) / float64(time.Millisecond)
