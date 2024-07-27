@@ -10,6 +10,12 @@ import (
 	"time"
 )
 
+var (
+	latency   = flag.Int("l", 250, "latency in ms to log")
+	tOkInt    = flag.Int("tok", 5, "duration in seconds after OK connect")
+	tNotOkInt = flag.Int("tnot", 2, "duration in seconds after NOT OK connect")
+)
+
 // Checks availibility
 func CheckPort(host string, port int) (bool, time.Duration) {
 	address := fmt.Sprintf("%s:%d", host, port)
@@ -23,10 +29,6 @@ func CheckPort(host string, port int) (bool, time.Duration) {
 	connectDuration := time.Since(startTime)
 	return true, connectDuration
 }
-
-var latency = flag.Int("l", 250, "latency in ms to log")
-var tOkInt = flag.Int("tok", 5, "duration in seconds after OK connect")
-var tNotOkInt = flag.Int("tnot", 2, "duration in seconds after NOT OK connect")
 
 func main() {
 	flag.Parse()
@@ -64,8 +66,9 @@ func tcpLogger(host string, portNumber int) {
 	defer f.Close()
 
 	// Logging
-	logger := log.New(f, "", log.LstdFlags)
-	logger.Printf("\nLogging started at %.22v.\n________________")
+	logger := log.New(f, "", 0)
+	logger.Println("")
+	logger.Printf("Logging started at %.22v:\n________________________________", time.Now())
 	for {
 		ok, lat := CheckPort(host, portNumber)
 		fLat := float64(lat) / float64(time.Millisecond)
