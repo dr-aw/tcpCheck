@@ -24,11 +24,11 @@ func CheckPort(host string, port int) (bool, time.Duration) {
 	return true, connectDuration
 }
 
-func main() {
-	latency := flag.Int("l", 250, "latency in ms to log")
-	tOkInt := flag.Int("tok", 5, "duration in seconds after OK connect")
-	tNotOkInt := flag.Int("tnot", 2, "duration in seconds after NOT OK connect")
+var latency = flag.Int("l", 250, "latency in ms to log")
+var tOkInt = flag.Int("tok", 5, "duration in seconds after OK connect")
+var tNotOkInt = flag.Int("tnot", 2, "duration in seconds after NOT OK connect")
 
+func main() {
 	flag.Parse()
 
 	if flag.NArg() != 2 {
@@ -49,7 +49,13 @@ func main() {
 		return
 	}
 
-	fmt.Printf("%.22v | Address: %s:%d - start checking...\nLatency for warning: %d ms, tOk: %d s, tNotOk: %d s\n________________\n", time.Now(), host, portNumber, *latency, *tOkInt, *tNotOkInt)
+	tcpLogger(host, portNumber)
+}
+
+func tcpLogger(host string, portNumber int) {
+	fmt.Printf("%.22v | Address: %s:%d - start checking...\n", time.Now(), host, portNumber)
+	fmt.Printf("Latency for warning: %d ms, tOk: %d s, tNotOk: %d s\n________________\n", *latency, *tOkInt, *tNotOkInt)
+
 	// Open file for logging
 	f, err := os.OpenFile("log.txt", os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
@@ -59,6 +65,7 @@ func main() {
 
 	// Logging
 	logger := log.New(f, "", log.LstdFlags)
+	logger.Printf("\nLogging started at %.22v.\n________________")
 	for {
 		ok, lat := CheckPort(host, portNumber)
 		fLat := float64(lat) / float64(time.Millisecond)
